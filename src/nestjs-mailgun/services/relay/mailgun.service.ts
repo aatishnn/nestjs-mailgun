@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { AKI_KEY, DOMAIN, PUBLIC_API_KEY } from '../../tokens/tokens';
+import { MAILGUN_OPTIONS } from '../../tokens/tokens';
+import { ConfigurationMailgun } from '../../configuration';
 import * as mailgunConfig from 'mailgun-js';
 
 export interface EmailOptions {
@@ -14,11 +15,9 @@ export interface EmailOptions {
 export class MailgunService {
   private readonly mailgun;
   constructor(
-    @Inject(AKI_KEY) private readonly apiKey,
-    @Inject(DOMAIN) private readonly domain,
-    @Inject(PUBLIC_API_KEY) private readonly publicApiKey,
+    @Inject(MAILGUN_OPTIONS) private readonly options: ConfigurationMailgun,
   ) {
-    this.mailgun = mailgunConfig({ apiKey, domain, publicApiKey });
+    this.mailgun = mailgunConfig(this.options);
   }
 
   public sendEmail(emailOptions: EmailOptions): Promise<boolean> {
